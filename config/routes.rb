@@ -8,4 +8,5 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "home#index"
+  resources :outdoor_sessions, only: [:create, :new, :edit, :update]
 end
