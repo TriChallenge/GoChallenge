@@ -1,16 +1,13 @@
 class HomeController < ApplicationController
-  before_action :authenticate_user!, only: [:index]
+  before_action :authenticate_user!
+
   def index
-    if user_signed_in?
-      @outdoor_session = OutdoorSession.new
-      @current_session = current_user.outdoor_sessions.find_by(end_time: nil)
-      @sessions = current_user.outdoor_sessions.where.not(end_time: nil)
-      @total_time = @sessions.sum(:duration)
-      @days_passed = (Date.today - Date.today.beginning_of_year).to_i 
-      @average_per_day = @total_time / @days_passed
-      @days_remaining = (Data.today.end_of_year - Date.today).to_i 
-      @required_per_day = (1000 - @total_time) / @days_remaining
-      @pace = (@average_per_day * 365).round(2)
-    end
+    @current_session = current_user.outdoor_sessions.find_by(end_time: nil)
+    @outdoor_session = OutdoorSession.new
+    @sessions = current_user.outdoor_sessions.where.not(end_time: nil).order(start_time: :desc)
+    @total_time = @sessions.sum(:duration) || 0
+    @average_per_day = @total_time / Date.today.yday
+    @required_per_day = (1000 - @total_time) / (365 - Date.today.yday)
+    @pace = @total_time / Date.today.yday * 365
   end
 end

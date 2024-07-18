@@ -1,30 +1,36 @@
 class OutdoorSessionsController < ApplicationController
   before_action :authenticate_user!
 
-  def new
-    @outdoor_session = OutdoorSession.new
-  end
-
   def create
     @outdoor_session = current_user.outdoor_sessions.build(outdoor_session_params)
-    if @outdoor_session.save
-      redirect_to root_path, notice: "Outdoor session started successfully"
-    else
-      render :new
-    end
-  end
 
-  def edit
-    @outdoor_session = current_user.outdoor_sessions.find(params[:id])
+    if @outdoor_session.save
+      flash[:notice] = "Outdoor session started successfully"
+    else
+      flash[:alert] = @outdoor_session.errors.full_messages.join(", ")
+    end
+
+    redirect_to root_path
   end
 
   def update
     @outdoor_session = current_user.outdoor_sessions.find(params[:id])
-    if @outdoor_sessions.update(outdoor_session_params)
-      redirect_to root_path, notice: "Outdoor session updated successfully"
+
+    if params[:outdoor_session][:stop_timer] == "true"
+      update_params = { end_time: Time.current, duration: ((Time.current - @outdoor_session.start_time) / 1.hour).round(2) }
+      success_message = "Outdoor session ended successfully"
     else
-      render :edit
+      update_params = outdoor_session_params
+      success_message = "Outdoor session updated successfully"
     end
+
+    if @outdoor_session.update(update_params)
+      flash[:notice] = success_message
+    else
+      flash[:alert] = @outdoor_session.errors.full_messages.join(", ")
+    end
+
+    redirect_to root_path
   end
 
   private

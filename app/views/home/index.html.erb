@@ -1,2 +1,99 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<div class="container">
+  <% if user_signed_in? %>
+    <h1>1000 Hours Outside Challenge for <%= current_user.email %></h1>
+
+    <% if @current_session.present? %>
+      <div id="stop-timer-form">
+        <%= form_with model: @current_session, url: outdoor_session_path(@current_session), method: :patch, local: true do |form| %>
+          <div class="form-group">
+            <%= form.hidden_field :stop_timer, value: true %>
+            <%= form.hidden_field :end_time, value: Time.current %>
+            <%= form.hidden_field :duration, value: ((Time.current - @current_session.start_time) / 1.hour).round(2) %>
+          </div>
+          <div class="form-group">
+            <%= form.submit "Stop Timer", class: "btn btn-danger" %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div id="start-timer-form">
+        <%= form_with model: @outdoor_session, url: outdoor_sessions_path, local: true do |form| %>
+          <div class="form-group">
+            <%= form.hidden_field :start_time, value: Time.current %>
+          </div>
+          <div class="form-group">
+            <%= form.submit "Start Timer", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div id="manual-session-form">
+      <h2>Create Outdoor Session Manually</h2>
+      <%= form_with model: @outdoor_session, url: outdoor_sessions_path, local: true do |form| %>
+        <div class="form-group">
+          <%= form.label :start_time %>
+          <%= form.datetime_select :start_time, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= form.label :end_time %>
+          <%= form.datetime_select :end_time, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= form.label :description %>
+          <%= form.text_area :description, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= form.submit "Create Outdoor Session", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div id="statistics">
+      <h2>Statistics</h2>
+      <p>Total time spent outside: <%= @total_time.round(2) %> hours</p>
+      <p>Average time per day: <%= @average_per_day.round(2) %> hours</p>
+      <p>Required average per day to reach 1000 hours: <%= @required_per_day.round(2) %> hours</p>
+      <p>On pace to achieve: <%= @pace %> hours in the year</p>
+    </div>
+
+    <div id="sessions">
+      <h2>Previous Sessions</h2>
+      <ul>
+        <% @sessions.each do |session| %>
+          <li>
+            <strong>Start:</strong> <%= session.start_time.strftime("%B %d, %Y %I:%M %p") %>, 
+            <strong>End:</strong> <%= session.end_time.strftime("%B %d, %Y %I:%M %p") %>, 
+            <strong>Duration:</strong> <%= session.duration %> hours, 
+            <strong>Description:</strong> <%= session.description %>
+            <%= link_to 'Edit', '#', class: 'btn btn-secondary btn-sm', data: { toggle: "collapse", target: "#edit-session-#{session.id}" } %>
+            <div id="edit-session-#{session.id}" class="collapse">
+              <%= form_with model: session, url: outdoor_session_path(session), method: :patch, local: true do |form| %>
+                <div class="form-group">
+                  <%= form.label :start_time %>
+                  <%= form.datetime_select :start_time, class: "form-control" %>
+                </div>
+                <div class="form-group">
+                  <%= form.label :end_time %>
+                  <%= form.datetime_select :end_time, class: "form-control" %>
+                </div>
+                <div class="form-group">
+                  <%= form.label :description %>
+                  <%= form.text_area :description, class: "form-control" %>
+                </div>
+                <div class="form-group">
+                  <%= form.submit "Update Session", class: "btn btn-primary" %>
+                </div>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <%= link_to "Logout", destroy_user_session_path, method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger float-end" %>
+  <% else %>
+    <h1>Welcome to the 1000 Hours Outside Challenge</h1>
+    <p>Please <%= link_to "Sign Up", new_user_registration_path %> or <%= link_to "Login", new_user_session_path %> to start tracking your outdoor time.</p>
+  <% end %>
+</div>

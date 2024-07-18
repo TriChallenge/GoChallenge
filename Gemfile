@@ -56,6 +56,7 @@ group :development, :test do
   gem 'capybara'
   gem 'shoulda-matchers'
   gem 'pry'
+  gem 'launchy'
 end
 
 

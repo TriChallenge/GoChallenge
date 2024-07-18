@@ -30,9 +30,12 @@ RSpec.describe "User Authentication", type: :feature do
     it "successfully logs a user out" do
       login_as(user, scope: :user)
       visit root_path
-      click_link "Logout"
 
-      expect(page).to have_content("Signed out successfully.")
+      expect(page).to have_content("1000 Hours Outside Challenge for #{user.email}")
+
+      click_link "Logout"
+      
+      expect(page).to have_content("You need to sign in or sign up before continuing.")
     end
   end
 end
