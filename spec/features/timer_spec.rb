@@ -13,7 +13,10 @@ RSpec.describe "Timer Feature", type: :feature do
       within '#start-timer-form' do
         click_button "Start Timer"
       end
+
+      expect(page).to have_content("Outdoor session started successfully")
       sleep 1
+      
       within '#stop-timer-form' do
         click_button "Stop Timer"
       end
