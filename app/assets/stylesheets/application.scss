@@ -1,0 +1,42 @@
+/* Custom bootstrap variables must be set or imported before bootstrap. */
+@import "bootstrap";
+
+/* Add any custom styles here */
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.btn-lg {
+  padding: 10px 20px;
+  font-size: 1.5em;
+  border-radius: 10px;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-orange {
+  background-color: orange;
+  color: black;
+  border: none;
+}
+
+.previous-sessions {
+  max-height: 400px;
+  overflow-y: scroll;
+}
