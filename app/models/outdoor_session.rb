@@ -4,7 +4,7 @@ class OutdoorSession < ApplicationRecord
   validates :end_time, presence: true, on: :update
   validate :end_time_after_start_time
 
-  before_save :calculate_duration
+  before_save :calculate_duration, if: -> { start_time.present? && end_time.present? }
 
   private
 
@@ -15,8 +15,6 @@ class OutdoorSession < ApplicationRecord
   end
 
   def calculate_duration
-    if start_time.present? && end_time.present?
-      self.duration = ((end_time - start_time) / 1.hour).round(2)
-    end
+    self.duration = ((end_time - start_time) / 1.hour).round(2)
   end
 end

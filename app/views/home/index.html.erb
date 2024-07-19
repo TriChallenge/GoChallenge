@@ -11,6 +11,9 @@
             <%= form.hidden_field :duration, value: ((Time.current - @current_session.start_time) / 1.hour).round(2) %>
           </div>
           <div class="form-group">
+            <%= form.text_area :description, placeholder: "Description", class: "form-control" %>
+          </div>
+          <div class="form-group">
             <%= form.submit "Stop Timer", class: "btn btn-danger" %>
           </div>
         <% end %>
@@ -90,8 +93,6 @@
         <% end %>
       </ul>
     </div>
-
-    <%= link_to "Logout", destroy_user_session_path, method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger float-end" %>
   <% else %>
     <h1>Welcome to the 1000 Hours Outside Challenge</h1>
     <p>Please <%= link_to "Sign Up", new_user_registration_path %> or <%= link_to "Login", new_user_session_path %> to start tracking your outdoor time.</p>
