@@ -11,6 +11,22 @@
   </head>
 
   <body>
+    <div class="header">
+      <div class="flash-messages">
+        <% if flash[:alert] %>
+          <div class="alert alert-danger"><%= flash[:alert] %></div>
+        <% end %>
+        <% if flash[:notice] %>
+          <div class="alert alert-success"><%= flash[:notice] %></div>
+        <% end %>
+      </div>
+      <div class="logout-link">
+        <% if user_signed_in? %>
+          <%= link_to "Logout", destroy_user_session_path, method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger" %>
+        <% end %>
+      </div>
+    </div>
+
     <%= yield %>
   </body>
 </html>

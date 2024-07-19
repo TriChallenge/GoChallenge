@@ -1,0 +1,2 @@
+module OutdoorSessionsHelper
+end
