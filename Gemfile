@@ -46,7 +46,13 @@ gem "bootsnap", require: false
 
 #use devise gem to impliment user authentication
 gem 'devise'
-
+gem 'bootstrap', '~> 5.3.3'
+gem 'popper_js', '~> 2.0'
+gem 'jquery-rails'
+gem 'dartsass-sprockets'
+gem 'sassc', '~> 2.4'
+gem 'rails-ujs'
+gem 'turbolinks'
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
