@@ -1,84 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    .profile-image {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-    .btn-lg {
-      padding: 10px 20px;
-      font-size: 1.5em;
-      border-radius: 10px;
-    }
-    .btn-success {
-      background-color: #28a745;
-      border-color: #28a745;
-    }
-    .btn-danger {
-      background-color: #dc3545;
-      border-color: #dc3545;
-    }
-    .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-    .previous-sessions {
-      max-height: 400px;
-      overflow-y: scroll;
-    }
-  </style>
-</head>
-<body>
-  <div class="container mt-4">
-    <% if user_signed_in? %>
-      <!-- Header Section -->
-      <div class="row mb-4">
-        <div class="col-12 text-center">
-          <h1>1000 Hours Outside Challenge for <%= current_user.email %></h1>
-        </div>
+<div class="container">
+  <% if user_signed_in? %>
+    <div class="row mb-4">
+      <div class="col text-center">
+        <% if @current_session.present? %>
+          <div id="stop-timer-form">
+            <%= form_with model: @current_session, url: outdoor_session_path(@current_session), method: :patch, local: true do |form| %>
+              <div class="form-group">
+                <%= form.hidden_field :stop_timer, value: true %>
+                <%= form.hidden_field :end_time, value: Time.current %>
+                <%= form.hidden_field :duration, value: ((Time.current - @current_session.start_time) / 1.hour).round(2) %>
+              </div>
+              <div class="form-group">
+                <%= form.text_area :description, placeholder: "Description", class: "form-control" %>
+              </div>
+              <div class="form-group">
+                <%= form.submit "Stop Timer", class: "btn btn-danger btn-lg" %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div id="start-timer-form">
+            <%= form_with model: @outdoor_session, url: outdoor_sessions_path, local: true do |form| %>
+              <div class="form-group">
+                <%= form.hidden_field :start_time, value: Time.current %>
+              </div>
+              <div class="form-group">
+                <%= form.submit "Start Timer", class: "btn btn-success btn-lg" %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
       </div>
+    </div>
 
-      <!-- Timer Section -->
-      <div class="row mb-4">
-        <div class="col-12 text-center">
-          <% if @current_session.present? %>
-            <div id="stop-timer-form">
-              <%= form_with model: @current_session, url: outdoor_session_path(@current_session), method: :patch, local: true do |form| %>
-                <div class="form-group">
-                  <%= form.hidden_field :stop_timer, value: true %>
-                  <%= form.hidden_field :end_time, value: Time.current %>
-                  <%= form.hidden_field :duration, value: ((Time.current - @current_session.start_time) / 1.hour).round(2) %>
-                </div>
-                <div class="form-group">
-                  <%= form.text_area :description, placeholder: "Description", class: "form-control my-2" %>
-                </div>
-                <div class="form-group">
-                  <%= form.submit "Stop Timer", class: "btn btn-danger btn-lg" %>
-                </div>
-              <% end %>
-            </div>
-          <% else %>
-            <div id="start-timer-form">
-              <%= form_with model: @outdoor_session, url: outdoor_sessions_path, local: true do |form| %>
-                <div class="form-group">
-                  <%= form.hidden_field :start_time, value: Time.current %>
-                </div>
-                <div class="form-group">
-                  <%= form.submit "Start Timer", class: "btn btn-success btn-lg" %>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      </div>
-
-      <!-- Manual Session Section -->
-      <div class="row mb-4">
-        <div class="col-12">
-          <h2 class="text-center">Create Outdoor Session Manually</h2>
+    <div class="row mb-4">
+      <div class="col">
+        <div id="manual-session-form" class="text-center">
+          <h2>Create Outdoor Session Manually</h2>
           <%= form_with model: @outdoor_session, url: outdoor_sessions_path, local: true do |form| %>
             <%= form.hidden_field :manual_creation, value: true %>
             <div class="form-group">
@@ -94,60 +52,42 @@
               <%= form.text_area :description, class: "form-control" %>
             </div>
             <div class="form-group">
-              <%= form.submit "Create Outdoor Session", class: "btn btn-primary" %>
+              <%= form.submit "Create Outdoor Session", class: "btn btn-primary btn-lg" %>
             </div>
           <% end %>
         </div>
       </div>
+    </div>
 
-      <!-- Statistics and Previous Sessions Section -->
-      <div class="row">
-        <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-6">
+        <div id="statistics">
           <h2>Statistics</h2>
           <p>Total time spent outside: <%= @total_time.round(2) %> hours</p>
           <p>Average time per day: <%= @average_per_day.round(2) %> hours</p>
           <p>Required average per day to reach 1000 hours: <%= @required_per_day.round(2) %> hours</p>
           <p>On pace to achieve: <%= @pace %> hours in the year</p>
         </div>
-        <div class="col-md-6">
+      </div>
+
+      <div class="col-md-6">
+        <div id="sessions" class="previous-sessions">
           <h2>Previous Sessions</h2>
-          <div class="previous-sessions">
-            <ul class="list-group">
-              <% @sessions.each do |session| %>
-                <li class="list-group-item">
-                  <strong>Start:</strong> <%= session.start_time.strftime("%B %d, %Y %I:%M %p") %>, 
-                  <strong>End:</strong> <%= session.end_time.strftime("%B %d, %Y %I:%M %p") %>, 
-                  <strong>Duration:</strong> <%= session.duration %> hours, 
-                  <strong>Description:</strong> <%= session.description %>
-                  <div id="edit-session-<%= session.id %>" class="collapse mt-2">
-                    <%= form_with model: session, url: outdoor_session_path(session), method: :patch, local: true do |form| %>
-                      <div class="form-group">
-                        <%= form.label :start_time %>
-                        <%= form.datetime_select :start_time, class: "form-control" %>
-                      </div>
-                      <div class="form-group">
-                        <%= form.label :end_time %>
-                        <%= form.datetime_select :end_time, class: "form-control" %>
-                      </div>
-                      <div class="form-group">
-                        <%= form.label :description %>
-                        <%= form.text_area :description, class: "form-control" %>
-                      </div>
-                      <div class="form-group">
-                        <%= form.submit "Update Session", class: "btn btn-primary" %>
-                      </div>
-                    <% end %>
-                  </div>
-                </li>
-              <% end %>
-            </ul>
-          </div>
+          <ul>
+            <% @sessions.each do |session| %>
+              <li>
+                <strong>Start:</strong> <%= session.start_time.strftime("%B %d, %Y %I:%M %p") %>, 
+                <strong>End:</strong> <%= session.end_time.strftime("%B %d, %Y %I:%M %p") %>, 
+                <strong>Duration:</strong> <%= session.duration %> hours, 
+                <strong>Description:</strong> <%= session.description %>
+              </li>
+            <% end %>
+          </ul>
         </div>
       </div>
-    <% else %>
-      <h1>Welcome to the 1000 Hours Outside Challenge</h1>
-      <p>Please <%= link_to "Sign Up", new_user_registration_path %> or <%= link_to "Login", new_user_session_path %> to start tracking your outdoor time.</p>
-    <% end %>
-  </div>
-</body>
-</html>
+    </div>
+  <% else %>
+    <h1>Welcome to the 1000 Hours Outside Challenge</h1>
+    <p>Please <%= link_to "Sign Up", new_user_registration_path %> or <%= link_to "Login", new_user_session_path %> to start tracking your outdoor time.</p>
+  <% end %>
+</div>
