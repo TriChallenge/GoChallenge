@@ -5,13 +5,13 @@
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
-  <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbo-track': 'reload', type: 'module' %>
 </head>
 <body>
   <div class="container mt-4">
     <% if user_signed_in? %>
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'btn btn-orange' %>
+        <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'btn btn-orange', data: { turbo: false } %>
       </div>
     <% end %>
 

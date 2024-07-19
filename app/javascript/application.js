@@ -2,18 +2,11 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "bootstrap"
-import "../stylesheets/application"
 import "@popperjs/core"
 import { Tooltip, Toast, Popover } from 'bootstrap'
-// app/assets/javascripts/application.js
-//= require jquery
-//= require popper
-//= require bootstrap
-//= require rails-ujs
-//= require activestorage
-//= require turbolinks
-//= require_tree .
 
+import Rails from "@rails/ujs"
+Rails.start()
 
 document.addEventListener("turbo:load", () => {
   // Initialize tooltips, popovers, etc.
