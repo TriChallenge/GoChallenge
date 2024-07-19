@@ -71,7 +71,7 @@
           <p>Total time spent outside: <%= @total_time.round(2) %> hours</p>
           <p>Average time per day: <%= @average_per_day.round(2) %> hours</p>
           <p>Required average per day to reach 1000 hours: <%= @required_per_day.round(2) %> hours</p>
-          <p>On pace to achieve: <%= @pace %> hours in the year</p>
+          <p>On pace to achieve: <%= @pace.round(2) %> hours in the year</p>
         </div>
       </div>
 
