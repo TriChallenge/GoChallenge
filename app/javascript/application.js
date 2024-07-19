@@ -5,9 +5,15 @@ import "bootstrap"
 import "../stylesheets/application"
 import "@popperjs/core"
 import { Tooltip, Toast, Popover } from 'bootstrap'
-//= require jquery3
+// app/assets/javascripts/application.js
+//= require jquery
 //= require popper
-//= require bootstrap-sprockets
+//= require bootstrap
+//= require rails-ujs
+//= require activestorage
+//= require turbolinks
+//= require_tree .
+
 
 document.addEventListener("turbo:load", () => {
   // Initialize tooltips, popovers, etc.
